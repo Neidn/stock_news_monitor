@@ -4,6 +4,15 @@ import pandas as pd
 from .config import *
 
 
+def make_news_article(current_news: dict) -> str:
+    current_news["providerPublishTime"] = datetime.datetime.fromtimestamp(current_news["providerPublishTime"]).strftime(
+        '%Y-%m-%d %H:%M:%S')
+    new_article = f'Headline: {current_news["title"]}\n'
+    new_article += f'URL: {current_news["link"]}\n'
+    new_article += f'Published: {current_news["providerPublishTime"]}\n'
+    return new_article
+
+
 class StockData:
     def __init__(self, stock: str):
         self.stock = stock

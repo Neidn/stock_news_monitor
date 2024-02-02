@@ -1,0 +1,13 @@
+# Test depedencies
+pynose
+pinocchio
+factory-boy
+
+# Code coverage
+coverage
+
+# Yahoo finance
+yfinance
+
+# Data manipulation
+pandas

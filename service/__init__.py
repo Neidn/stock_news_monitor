@@ -1,8 +1,9 @@
 from .stock_data import StockData
+from .config import *
 
-stock_data = StockData('AAPL')
+test_stock = 'AAPL'
+stock_data = StockData(test_stock)
 
-print(stock_data.close_gap)
-
-if stock_data.close_gap > 1:
-    print('🔺')
+if stock_data.difference_gap > THRESHOLD:
+    print('Get news')
+    print(stock_data.get_news())

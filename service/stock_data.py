@@ -5,13 +5,14 @@ from .config import *
 
 
 class StockData:
-    def __init__(self, ticker):
-        self.stock = ticker
+    def __init__(self, stock: str):
+        self.stock = stock
+        self.ticker = yf.Ticker(stock)
         self.data = None
         self.yesterday_close = None
         self.day_before_yesterday_close = None
 
-        self.__get_data(ticker)
+        self.__get_data()
         '''
         # today's opening price
         self.percent_change = f"{self.stock}: {'🔺' if self.change > 0 else '🔻'}{abs(self.change)}%"
@@ -19,23 +20,13 @@ class StockData:
         self.news = []
         '''
 
-    def __get_data(self, ticker: str) -> None:
-        self.data = yf.download(ticker, start=DAY_BEFORE_YESTERDAY)
+    def __get_data(self) -> pd.DataFrame:
+        self.data = self.ticker.history(period='2d')
 
-        self.yesterday_close = self.data.loc[YESTERDAY]['Adj Close'] if self.data.loc[YESTERDAY]['Adj Close'] else \
-            self.data.loc[YESTERDAY]['Close']
-        self.day_before_yesterday_close = self.data.loc[DAY_BEFORE_YESTERDAY]['Adj Close'] if \
-            self.data.loc[DAY_BEFORE_YESTERDAY]['Adj Close'] else self.data.loc[DAY_BEFORE_YESTERDAY]['Close']
-
-        self.__difference_between_close_prices()
-        self.__difference_percentage_close_price()
+        self.difference_close = abs(self.data.loc[YESTERDAY]['Close'] - self.data.loc[DAY_BEFORE_YESTERDAY]['Close'])
+        self.difference_gap = (self.difference_close / self.data.loc[YESTERDAY]['Close']) * 100
 
         return self.data
 
-    def __difference_between_close_prices(self):
-        self.difference_close = abs(self.yesterday_close - self.day_before_yesterday_close)
-        return self.difference_close
-
-    def __difference_percentage_close_price(self):
-        self.close_gap =(self.difference_close / self.yesterday_close) * 100
-        return self.close_gap
+    def get_news(self):
+        return self.ticker.news
